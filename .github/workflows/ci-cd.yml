@@ -29,19 +29,19 @@ jobs:
       # Step 3: Authenticate to DevOrg using web login
       - script: |
           echo "Authenticating to DevOrg using web login..."
-          sfdx auth:web:login --setalias DevOrg --instanceurl https://taruitsolutions-e-dev-ed.develop.my.salesforce.com
+          sfdx auth:web:login --setalias dev --instanceurl test.login.salesforce
         displayName: 'Authenticate to DevOrg'
 
       # Step 4: Authenticate to UatOrg using web login
       - script: |
           echo "Authenticating to UatOrg using web login..."
-          sfdx auth:web:login --setalias UatOrg --instanceurl https://taruitsolutions-6e-dev-ed.develop.my.salesforce.com
+          sfdx auth:web:login --setalias uat --instanceurl test.login.salesforce
         displayName: 'Authenticate to UatOrg'
 
       # Step 5: Deploy to UatOrg using sfdx command (with path to Salesforce CLI specified)
       - script: |
           echo "Deploying to UatOrg..."
-          sf project deploy start --source-dir force-app --target-org UatOrg
+          sf project deploy start --source-dir force-app --target-org uat
         displayName: 'Deploy to UatOrg'
 
       # Optional Step: Commit and push changes

@@ -14,11 +14,9 @@ jobs:
       name: 'mess'  # Use your self-hosted agent pool
 
     steps:
-      # Step 1: Checkout the repository
       - checkout: self
         displayName: 'Checkout repository'
 
-      # Step 2: Set Salesforce CLI Path (assuming it's installed on the system)
       - script: |
           echo "Adding Salesforce CLI to PATH..."
           echo "##vso[task.setvariable variable=PATH]\"C:\Program Files\Salesforce CLI\bin\";$(PATH)"
@@ -26,7 +24,6 @@ jobs:
           sfdx --version  # Verify Salesforce CLI is available
         displayName: 'Set Salesforce CLI Path'
 
-      # Step 3: Authenticate to DevOrg using web login
       - script: |
           echo "Authenticating to DevOrg using web login..."
           sfdx auth:web:login --setalias dev --instanceurl https://taruitsolutions25-dev-ed.develop.my.salesforce.com/

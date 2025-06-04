@@ -1,4 +1,4 @@
-name: Retrieve Salesforce Package
+name: Retrieve Metadata
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   retrieve:
     name: Retrieve Metadata from Dev Org
-    runs-on: self-hosted  # Uses your self-hosted runner (deployment agent from "project X")
+    runs-on: self-hosted  # This will use your local deployment pool agent
 
     steps:
       - name: Checkout Repository
@@ -17,15 +17,13 @@ jobs:
       - name: Set Salesforce CLI Path
         run: |
           echo "Adding Salesforce CLI to PATH..."
-          echo "PATH=\"C:\\Program Files\\Salesforce CLI\\bin\\\":$PATH" >> $GITHUB_ENV
+          echo "PATH='C:\\Program Files\\Salesforce CLI\\bin\\':$PATH" >> $GITHUB_ENV
           sf --version
 
-      - name: Authenticate to Dev Org (Web Login)
+      - name: Authenticate to Dev Org
         run: |
-          echo "Authenticating to Dev Org..."
           sf auth:web:login --setalias dev --instanceurl https://taruavocette4-dev-ed.develop.my.salesforce.com
 
-      - name: Retrieve Metadata from Dev Org
+      - name: Retrieve Metadata (package.xml)
         run: |
-          echo "Retrieving metadata from package.xml..."
           sf project retrieve start --manifest manifest/package.xml

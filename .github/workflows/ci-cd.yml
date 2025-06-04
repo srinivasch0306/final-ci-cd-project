@@ -1,29 +1,26 @@
-name: Retrieve Metadata
-
-on:
-  push:
-    branches:
+trigger:
+  branches:
+    include:
       - main
 
-jobs:
-  retrieve:
-    name: Retrieve Metadata from Dev Org
-    runs-on: self-hosted  # This will use your local deployment pool agent
+pool:
+  name: 'project X'  # Your offline/self-hosted deployment pool
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+steps:
+  - checkout: self
 
-      - name: Set Salesforce CLI Path
-        run: |
-          echo "Adding Salesforce CLI to PATH..."
-          echo "PATH='C:\\Program Files\\Salesforce CLI\\bin\\':$PATH" >> $GITHUB_ENV
-          sf --version
+  - script: |
+      echo "Adding Salesforce CLI to PATH..."
+      set PATH="C:\Program Files\Salesforce CLI\bin";%PATH%
+      sf --version
+    displayName: 'Set Salesforce CLI Path'
 
-      - name: Authenticate to Dev Org
-        run: |
-          sf auth:web:login --setalias dev --instanceurl https://taruavocette4-dev-ed.develop.my.salesforce.com
+  - script: |
+      echo "Authenticating to Dev Org..."
+      sf auth:web:login --setalias dev --instance-url https://taruavocette4-dev-ed.develop.lightning.force.com
+    displayName: 'Authenticate to Dev Org'
 
-      - name: Retrieve Metadata (package.xml)
-        run: |
-          sf project retrieve start --manifest manifest/package.xml
+  - script: |
+      echo "Retrieving metadata using package.xml..."
+      sf project retrieve start --manifest manifest/package.xml
+    displayName: 'Retrieve Metadata'

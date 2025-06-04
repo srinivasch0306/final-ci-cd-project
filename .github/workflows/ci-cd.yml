@@ -1,35 +1,31 @@
-trigger:
-  branches:
-    include:
+name: Retrieve Salesforce Package
+
+on:
+  push:
+    branches:
       - main
 
 jobs:
-  - job: retrieve
-    displayName: 'Retrieve Salesforce Metadata Package'
-    deployment:
-      pool:
-        name: 'project X'  # Your deployment pool name
+  retrieve:
+    name: Retrieve Metadata from Dev Org
+    runs-on: self-hosted  # Uses your self-hosted runner (deployment agent from "project X")
 
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            - checkout: self
-              displayName: 'Checkout repository'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-            - script: |
-                echo "Adding Salesforce CLI to PATH..."
-                echo "##vso[task.setvariable variable=PATH]\"C:\Program Files\Salesforce CLI\bin\";$(PATH)"
-                echo "Updated PATH: $(PATH)"
-                sf --version
-              displayName: 'Set Salesforce CLI Path'
+      - name: Set Salesforce CLI Path
+        run: |
+          echo "Adding Salesforce CLI to PATH..."
+          echo "PATH=\"C:\\Program Files\\Salesforce CLI\\bin\\\":$PATH" >> $GITHUB_ENV
+          sf --version
 
-            - script: |
-                echo "Authenticating to Dev Org using web login..."
-                sf auth:web:login --setalias dev --instanceurl https://taruavocette4-dev-ed.develop.my.salesforce.com
-              displayName: 'Authenticate to Dev Org'
+      - name: Authenticate to Dev Org (Web Login)
+        run: |
+          echo "Authenticating to Dev Org..."
+          sf auth:web:login --setalias dev --instanceurl https://taruavocette4-dev-ed.develop.my.salesforce.com
 
-            - script: |
-                echo "Retrieving metadata using package.xml manifest..."
-                sf project retrieve start --manifest manifest/package.xml
-              displayName: 'Retrieve metadata from Dev Org'
+      - name: Retrieve Metadata from Dev Org
+        run: |
+          echo "Retrieving metadata from package.xml..."
+          sf project retrieve start --manifest manifest/package.xml
